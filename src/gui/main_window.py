@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
     QLabel,
 )
 
-from emulator import ShellEmulator
+from core.emulator import ShellEmulator
 
 
 class MainWindow(QMainWindow):
@@ -21,7 +21,6 @@ class MainWindow(QMainWindow):
 
     def __init__(self, vfs_path: str = "", script_path: str = "", parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.emulator = ShellEmulator()
         self.vfs_path = vfs_path
         self.script_path = script_path
 
@@ -65,9 +64,19 @@ class MainWindow(QMainWindow):
 
         layout.addLayout(input_layout)
 
+        self.emulator = ShellEmulator(self.vfs_path)
+
         self.output_area.append("REPL инициализирован. Ожидание ввода...")
-        self.output_area.append(f"[DEBUG] Путь VFS: {self.vfs_path if self.vfs_path else 'Не задан'}")
-        self.output_area.append(f"[DEBUG] Стартовый скрипт: {self.script_path if self.script_path else 'Не задан'}\n")
+        self.output_area.append(f"[DEBUG] Стартовый скрипт: {self.script_path if self.script_path else 'Не задан'}")
+
+        if self.emulator.vfs.error:
+            self.output_area.append(f"<font color='#f44336'>{self.emulator.vfs.error}</font>\n")
+        elif self.emulator.vfs.path:
+            name = os.path.basename(self.vfs_path)
+            self.output_area.append(f"<font color='#4af626'>VFS '{name}' успешно загружена.</font>\n")
+        else:
+            self.output_area.append("<font color='#f44336'>Внимание: VFS не подключена.</font>\n")
+
         self.input_line.setFocus()
 
     def _run_startup_script(self) -> None:
