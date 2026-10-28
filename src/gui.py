@@ -1,3 +1,4 @@
+import os
 import getpass
 import socket
 
@@ -18,12 +19,17 @@ from emulator import ShellEmulator
 class MainWindow(QMainWindow):
     """Главное окно графического интерфейса эмулятора."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, vfs_path: str = "", script_path: str = "", parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.emulator = ShellEmulator()
+        self.vfs_path = vfs_path
+        self.script_path = script_path
+
         self.username = getpass.getuser()
         self.hostname = socket.gethostname()
+
         self._init_ui()
+        self._run_startup_script()
 
     def _init_ui(self) -> None:
         self.setWindowTitle(f"Эмулятор [{self.username}@{self.hostname}]")
@@ -59,8 +65,38 @@ class MainWindow(QMainWindow):
 
         layout.addLayout(input_layout)
 
-        self.output_area.append("REPL инициализирован. Ожидание ввода...\n")
+        self.output_area.append("REPL инициализирован. Ожидание ввода...")
+        self.output_area.append(f"[DEBUG] Путь VFS: {self.vfs_path if self.vfs_path else 'Не задан'}")
+        self.output_area.append(f"[DEBUG] Стартовый скрипт: {self.script_path if self.script_path else 'Не задан'}\n")
         self.input_line.setFocus()
+
+    def _run_startup_script(self) -> None:
+        if not self.script_path or not os.path.exists(self.script_path):
+            return
+
+        self.output_area.append(f"--- Выполнение стартового скрипта: {self.script_path} ---")
+        with open(self.script_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                command_text = line.strip()
+                if not command_text:
+                    continue
+
+                prompt = f"<font color='#4af626'>{self.username}@{self.hostname}:~$</font>"
+                self.output_area.append(f"{prompt} {command_text}")
+
+                result = self.emulator.execute_command(command_text)
+                if result:
+                    self.output_area.append(result)
+
+                if result.startswith("Ошибка"):
+                    self.output_area.append("<font color='#f44336'>Скрипт остановлен из-за ошибки.</font>")
+                    break
+
+                if not self.emulator.is_running:
+                    self.close()
+                    return
+
+        self.output_area.append("--- Завершение выполнения скрипта ---\n")
 
     def _process_command(self) -> None:
         command_text = self.input_line.text().strip()
