@@ -4,8 +4,10 @@ import hashlib
 
 
 class VirtualFileSystem:
+    """Управляет загрузкой и состоянием виртуальной файловой системы."""
+
     def __init__(self, path: str) -> None:
-        """Инициализирует VFS, задает начальные значения и запускает загрузку."""
+        """Инициализация параметров и запуск загрузки VFS."""
         self.path = path
         self.error = ""
         self.hash_sha256 = ""
