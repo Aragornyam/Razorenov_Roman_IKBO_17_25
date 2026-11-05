@@ -19,7 +19,13 @@ from core.emulator import ShellEmulator
 class MainWindow(QMainWindow):
     """Главное окно графического интерфейса эмулятора."""
 
-    def __init__(self, vfs_path: str = "", script_path: str = "", parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        vfs_path: str = "",
+        script_path: str = "",
+        parent: QWidget | None = None
+    ) -> None:
+        """Инициализация главного окна."""
         super().__init__(parent)
         self.vfs_path = vfs_path
         self.script_path = script_path
@@ -31,9 +37,14 @@ class MainWindow(QMainWindow):
         self._run_startup_script()
 
     def _init_ui(self) -> None:
-        self.setWindowTitle(f"Эмулятор [{self.username}@{self.hostname}]")
+        """Настройка основного интерфейса."""
+        self.setWindowTitle(
+            f"Эмулятор [{self.username}@{self.hostname}]"
+        )
         self.resize(750, 500)
-        self.setStyleSheet("background-color: #1e1e1e; color: #d4d4d4;")
+        self.setStyleSheet(
+            "background-color: #1e1e1e; color: #d4d4d4;"
+        )
 
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
@@ -42,6 +53,10 @@ class MainWindow(QMainWindow):
         layout.setSpacing(0)
         layout.setContentsMargins(10, 10, 10, 10)
 
+        self._setup_components(layout)
+
+    def _setup_components(self, layout: QVBoxLayout) -> None:
+        """Настройка компонентов интерфейса."""
         self.output_area = QTextEdit(self)
         self.output_area.setReadOnly(True)
         self.output_area.setFont(QFont("Consolas", 11))
@@ -51,46 +66,77 @@ class MainWindow(QMainWindow):
         input_layout = QHBoxLayout()
         input_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.prompt_label = QLabel(f"{self.username}@{self.hostname}:~$ ", self)
+        prompt_text = f"{self.username}@{self.hostname}:~$ "
+        self.prompt_label = QLabel(prompt_text, self)
         self.prompt_label.setFont(QFont("Consolas", 11))
         self.prompt_label.setStyleSheet("color: #4af626;")
         input_layout.addWidget(self.prompt_label)
 
         self.input_line = QLineEdit(self)
         self.input_line.setFont(QFont("Consolas", 11))
-        self.input_line.setStyleSheet("border: none; background-color: #1e1e1e; color: #d4d4d4;")
-        self.input_line.returnPressed.connect(self._process_command)  # type: ignore
+        self.input_line.setStyleSheet(
+            "border: none; "
+            "background-color: #1e1e1e; "
+            "color: #d4d4d4;"
+        )
+        self.input_line.returnPressed.connect(
+            self._process_command
+        )
         input_layout.addWidget(self.input_line)
 
         layout.addLayout(input_layout)
 
         self.emulator = ShellEmulator(self.vfs_path)
+        self._display_startup_info()
 
-        self.output_area.append("REPL инициализирован. Ожидание ввода...")
-        self.output_area.append(f"[DEBUG] Стартовый скрипт: {self.script_path if self.script_path else 'Не задан'}")
+    def _display_startup_info(self) -> None:
+        """Отображение информации при запуске."""
+        self.output_area.append(
+            "REPL инициализирован. Ожидание ввода..."
+        )
+        script_info = self.script_path if self.script_path else 'Не задан'
+        self.output_area.append(
+            f"[DEBUG] Стартовый скрипт: {script_info}"
+        )
 
         if self.emulator.vfs.error:
-            self.output_area.append(f"<font color='#f44336'>{self.emulator.vfs.error}</font>\n")
+            self.output_area.append(
+                f"<font color='#f44336'>"
+                f"{self.emulator.vfs.error}</font>\n"
+            )
         elif self.emulator.vfs.path:
             name = os.path.basename(self.vfs_path)
-            self.output_area.append(f"<font color='#4af626'>VFS '{name}' успешно загружена.</font>\n")
+            self.output_area.append(
+                f"<font color='#4af626'>VFS '{name}' "
+                f"успешно загружена.</font>\n"
+            )
         else:
-            self.output_area.append("<font color='#f44336'>Внимание: VFS не подключена.</font>\n")
+            self.output_area.append(
+                "<font color='#f44336'>Внимание: "
+                "VFS не подключена.</font>\n"
+            )
 
         self.input_line.setFocus()
 
     def _run_startup_script(self) -> None:
+        """Выполнение стартового скрипта."""
         if not self.script_path or not os.path.exists(self.script_path):
             return
 
-        self.output_area.append(f"--- Выполнение стартового скрипта: {self.script_path} ---")
+        self.output_area.append(
+            f"--- Выполнение стартового скрипта: "
+            f"{self.script_path} ---"
+        )
         with open(self.script_path, 'r', encoding='utf-8') as f:
             for line in f:
                 command_text = line.strip()
                 if not command_text:
                     continue
 
-                prompt = f"<font color='#4af626'>{self.username}@{self.hostname}:~$</font>"
+                prompt = (
+                    f"<font color='#4af626'>"
+                    f"{self.username}@{self.hostname}:~$</font>"
+                )
                 self.output_area.append(f"{prompt} {command_text}")
 
                 result = self.emulator.execute_command(command_text)
@@ -98,7 +144,10 @@ class MainWindow(QMainWindow):
                     self.output_area.append(result)
 
                 if result.startswith("Ошибка"):
-                    self.output_area.append("<font color='#f44336'>Скрипт остановлен из-за ошибки.</font>")
+                    self.output_area.append(
+                        "<font color='#f44336'>Скрипт остановлен "
+                        "из-за ошибки.</font>"
+                    )
                     break
 
                 if not self.emulator.is_running:
@@ -108,13 +157,17 @@ class MainWindow(QMainWindow):
         self.output_area.append("--- Завершение выполнения скрипта ---\n")
 
     def _process_command(self) -> None:
+        """Обработка введенной команды."""
         command_text = self.input_line.text().strip()
         if not command_text:
             return
 
         self.input_line.clear()
 
-        prompt = f"<font color='#4af626'>{self.username}@{self.hostname}:~$</font>"
+        prompt = (
+            f"<font color='#4af626'>"
+            f"{self.username}@{self.hostname}:~$</font>"
+        )
         self.output_area.append(f"{prompt} {command_text}")
 
         result = self.emulator.execute_command(command_text)
