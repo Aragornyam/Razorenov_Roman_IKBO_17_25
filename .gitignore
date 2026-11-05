@@ -10,7 +10,7 @@ build/
 .eggs/
 
 # --- venv ---
-.venv/
+../.venv/
 venv/
 ENV/
 env/
