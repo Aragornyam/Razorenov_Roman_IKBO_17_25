@@ -4,10 +4,8 @@ import hashlib
 
 
 class VirtualFileSystem:
-    """Управляет загрузкой и хранением состояния виртуальной файловой системы."""
-
-    def __init__(self, path: str) \
-            -> None:
+    def __init__(self, path: str) -> None:
+        """Инициализирует VFS, задает начальные значения и запускает загрузку."""
         self.path = path
         self.error = ""
         self.hash_sha256 = ""
@@ -32,7 +30,8 @@ class VirtualFileSystem:
                 reader = csv.DictReader(f)
                 req_cols = {"path", "type", "content"}
 
-                if not reader.fieldnames or not req_cols.issubset(set(reader.fieldnames)):
+                if (not reader.fieldnames or 
+                        not req_cols.issubset(set(reader.fieldnames))):
                     self.error = (
                         "Ошибка: Неверный формат VFS. "
                         "Требуются колонки path, type, content."
