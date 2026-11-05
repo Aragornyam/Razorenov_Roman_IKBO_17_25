@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=$HOME/.local/bin:$PATH
 
 echo "=== Тестирование Этапа 5: Визуализация ==="
 
