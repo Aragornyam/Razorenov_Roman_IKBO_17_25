@@ -2,7 +2,8 @@ import argparse
 import sys
 
 
-def parse_args():
+def _setup_parser() -> argparse.ArgumentParser:
+    """Создает и настраивает парсер аргументов командной строки."""
     parser = argparse.ArgumentParser(
         description="Анализатор графа зависимостей"
     )
@@ -30,7 +31,13 @@ def parse_args():
         "--max-depth", type=int, required=True,
         help="Максимальная глубина анализа"
     )
+    return parser
 
+
+def parse_args() -> argparse.Namespace:
+    """Разбирает и валидирует аргументы командной строки."""
+    parser = _setup_parser()
+    
     try:
         args = parser.parse_args()
     except SystemExit:
