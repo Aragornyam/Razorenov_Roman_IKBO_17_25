@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}" \
+    exec python3 -m confconv "$@"
