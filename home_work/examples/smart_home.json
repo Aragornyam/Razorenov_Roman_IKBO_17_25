@@ -1,0 +1,43 @@
+{
+  "home": "Flat 12",
+  "rooms": {
+    "living_room": {
+      "lamps": [
+        {
+          "brightness": 0.8,
+          "color": "warm"
+        },
+        {
+          "brightness": 0.3,
+          "color": "cold"
+        }
+      ],
+      "thermostat": 21.5
+    },
+    "bedroom": {
+      "lamps": [
+        {
+          "brightness": 0.1,
+          "color": "warm"
+        }
+      ],
+      "thermostat": 18.5,
+      "blinds": []
+    }
+  },
+  "scenes": {
+    "morning": {
+      "alarms": [
+        "07:30",
+        "07:45"
+      ],
+      "target_temperature": 21.5
+    },
+    "night": {
+      "alarms": [],
+      "target_temperature": 18.5,
+      "lock_doors": "yes"
+    },
+    "away": {}
+  }
+}

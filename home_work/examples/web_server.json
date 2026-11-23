@@ -1,0 +1,34 @@
+{
+  "name": "shop-api",
+  "version": "2.4",
+  "listen": {
+    "host": "0.0.0.0",
+    "port": 8080.0,
+    "tls": {
+      "enabled": "yes",
+      "certificate": "/etc/ssl/shop.pem"
+    }
+  },
+  "timeouts": {
+    "connect": 0.5,
+    "read": 30.0,
+    "write": 30.0
+  },
+  "upstreams": [
+    {
+      "host": "10.0.0.11",
+      "port": 9000.0,
+      "weight": 1.5
+    },
+    {
+      "host": "10.0.0.12",
+      "port": 9000.0,
+      "weight": 0.5
+    }
+  ],
+  "headers": [
+    "X-Frame-Options: DENY",
+    "X-Content-Type-Options: nosniff"
+  ],
+  "contact": "ops@example.com"
+}
