@@ -30,7 +30,7 @@ class String:
 class Array:
     """Массив #( значение ... )."""
 
-    items: Tuple["Value", ...]
+    items: Tuple["node_value", ...]
 
 
 @dataclass(frozen=True)
@@ -38,7 +38,7 @@ class Entry:
     """Одна пара имя = значение в словаре."""
 
     name: Name
-    value: "Value"
+    value: "node_value"
 
 
 @dataclass(frozen=True)
@@ -61,7 +61,7 @@ class SetStmt:
     этапе трансляции set имя = значение."""
 
     name: Name
-    value: "Value"
+    value: "node_value"
 
 
 @dataclass(frozen=True)
@@ -69,7 +69,7 @@ class Program:
     """Весь текст: объявления и значения
     в порядке их написания."""
 
-    statements: Tuple[Union[SetStmt, "Value"], ...]
+    statements: Tuple[Union[SetStmt, "node_value"], ...]
 
 
-Value = Union[Number, String, Array, Mapping, ConstRef]
+node_value = Union[Number, String, Array, Mapping, ConstRef]

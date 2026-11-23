@@ -81,7 +81,8 @@ class ConstantTests(TranslatorTestCase):
             "{ set a = .1 }", ConfigSyntaxError, "объявления разрешены")
 
     def test_declaration_is_not_allowed_inside_array(self):
-        self.assert_fails("#( set a = .1 )", ConfigSyntaxError, "зарезервированное")
+        self.assert_fails(
+            "#( set a = .1 )", ConfigSyntaxError, "зарезервированное")
 
     def test_declaration_without_value(self):
         self.assert_fails("set a =", ConfigSyntaxError, "ожидалось значение")
@@ -99,4 +100,5 @@ class ConstantTests(TranslatorTestCase):
         self.assert_fails("set a = .1 ![a", ConfigSyntaxError, "ожидалось ']'")
 
     def test_keyword_set_cannot_be_constant_name(self):
-        self.assert_fails("set set = .5 .1", ConfigSyntaxError, "зарезервированное")
+        self.assert_fails(
+            "set set = .5 .1", ConfigSyntaxError, "зарезервированное")

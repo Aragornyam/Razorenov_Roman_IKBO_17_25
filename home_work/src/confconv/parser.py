@@ -54,7 +54,8 @@ def _to_syntax_error(exc, text):
             expected = expected[9:]
         else:
             expected = expected[:1].lower() + expected[1:]
-        message = f"ожидалось {expected}, найдено {_describe_found(text, exc.loc)}"
+        message = (f"ожидалось {expected}, "
+                   f"найдено {_describe_found(text, exc.loc)}")
     return ConfigSyntaxError(message, exc.lineno, exc.column)
 
 
